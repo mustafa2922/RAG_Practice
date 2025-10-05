@@ -1,0 +1,77 @@
+# -------------------------
+# Python
+# -------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# Virtual environment
+ragvenv/
+ENV/
+env/
+.venv/
+
+# Jupyter notebooks
+.ipynb_checkpoints
+
+# Logs & caches
+*.log
+*.pot
+*.mo
+*.pyc
+*.pkl
+*.db
+*.sqlite3
+*.sqlite
+.cache/
+.mypy_cache/
+.pytest_cache/
+coverage/
+htmlcov/
+
+# Environment variables
+.env
+*.env
+.env.*
+
+# VS Code & IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Hugging Face / LangChain cache
+huggingface_hub/
+transformers_cache/
+langchain_cache/
+
+# Optional: test artifacts
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Optional: local data
+data/
+*.csv
+*.tsv
+*.parquet
