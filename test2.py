@@ -3,13 +3,14 @@ import unicodedata
 from bs4 import BeautifulSoup
 import re
 
-url =   "https://www.fatwaqa.com/ur/fatawa/hajj-aur-umrah/bete-ke-paison-se-hajj"
+# ====================== constants ============================================================
 
 tasmiya_pattern = r'بسم\s*الل[هہھ]\s*الرحم[ٰ]?[نں]\s*الرح[یيى]م'
 
 start_pattern =  r'الجواب\s*بعون\s*الملک\s*الوھاب'
 end_pattern = r'و\s*اللہ\s*اعلم\s*عز\s*و\s*جل\s*و\s*رسولہ\s*اعلم'
-question_title = r'سوال'
+
+question_title = r'د[\u064B-\u0652\u0670]*\s*ا[\u064B-\u0652\u0670]*\s*ر[\u064B-\u0652\u0670]*\s*ا[\u064B-\u0652\u0670]*\s*ل[\u064B-\u0652\u0670]*\s*ا[\u064B-\u0652\u0670]*\s*ف[\u064B-\u0652\u0670]*\s*ت[\u064B-\u0652\u0670]*\s*ا[\u064B-\u0652\u0670]*\s*ء[\u064B-\u0652\u0670]*\s*ا[\u064B-\u0652\u0670]*\s*[هہھۃ][\u064B-\u0652\u0670]*\s*ل[\u064B-\u0652\u0670]*\s*س[\u064B-\u0652\u0670]*\s*[نں][\u064B-\u0652\u0670]*\s*ت[\u064B-\u0652\u0670]*'
 answer_title = 'جواب'
 
 ANSWER_START = 'بِسْمِ اللہِ الرَّحْمٰنِ الرَّحِیْمِ اَلْجَوَابُ بِعَوْنِ الْمَلِکِ الْوَھَّابِ'
@@ -53,68 +54,40 @@ def extract_fatwa_data(html_content):
    
    return unicodedata.normalize("NFC", text)
 
-# ================================= single unit run ======================================
+def extract_ques_ans(text):
 
-html = extract_fatwa_HTML(url)
+    first_split = re.split(question_title,text)
+    second_split = re.split(start_pattern,first_split[1])
 
-text = extract_fatwa_data(html)
+    question = second_split[0]
+    question = question.replace(answer_title,'')
+    question = re.sub(tasmiya_pattern,'',question)
+    question = question[question.find('سوال')+len('سوال'):]
 
-first_split = re.split(question_title,text)
+    third_split = re.split(end_pattern,second_split[1])
 
-second_split = re.split(start_pattern,first_split[1])
+    answer = third_split[0]
+    answer = ANSWER_START + answer + ANSWER_END
 
-question = second_split[0]
-question = question.replace(answer_title,'')
-question = re.sub(tasmiya_pattern,'',question)
+    return {'question':question,'answer':answer}
 
-print(question)
-print()
-
-third_split = re.split(end_pattern,second_split[1])
-
-answer = third_split[0]
-answer = ANSWER_START + answer + ANSWER_END
-
-print(answer)
 
 # ===================================================================
 
-Ten_URLS = [ "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/fajr-ki-sunnat-reh-jana",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/quran-pak-par-airab",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/quran-pak-tarjuma-record-karwana",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/meher-kam-se-kam-miqdar-hadees",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/quran-mushriqain-maghribain-matlab",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/jora-sadaqah-karna-hadees",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/chalte-phirte-tilawat",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/quran-ko-makhlooq-kehna",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/musalman-ko-gali-dena-hadees-sharah",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/imam-ka-gardanen-phalangna",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/fajir-ke-peeche-namaz",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/toba-karne-wale",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/quran-se-unchi-jaga-bethna",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/panch-waqt-ki-namaz-quran-mein-zikr",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/quran-pak-parhna-afzal-hai-ya-sunna",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/nasab-badalne-wale-par-jannat-haram-hone-ka-matlab",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/yusha-kon-hain",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/ek-qurani-ayat-ki-tafseer",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/surah-mulk-maghrib-se-pehle-parhna",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/allah-ki-bande-se-mohabbat",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/bewazu-page-par-ayat-e-qurani-likhna",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/baal-rangne-mein-yahood-nasara-ki-mukhalfat",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/tilawat-mein-naam-e-muhammad-aane-par-anguthe-chumna",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/dua-hizbul-bahr-parhna-kaisa",
-  "https://www.fatwaqa.com/ur/fatawa/quran-aur-hadees/kya-rozana-kangi-karna-mana-hai",]
+Ten_URLS = ["https://www.fatwaqa.com/ur/fatawa/aqaid/musalman-ko-kafir-kehna-kaisa-kya-kehne-wala-kafir-hoga",
+  "https://www.fatwaqa.com/ur/fatawa/aqaid/hazrat-adam-ki-aulaad-hone-ki-bina-par-hindu-muslim-bhai-bhai-kehna",
+  "https://www.fatwaqa.com/ur/fatawa/aqaid/is-niyat-se-kalima-parhna-ke-kufriya-jumla-na-nikla-ho",
+  "https://www.fatwaqa.com/ur/fatawa/aqaid/ek-mashhoor-sher-ka-shari-hukum",
+  "https://www.fatwaqa.com/ur/fatawa/aqaid/kya-islam-mein-churail-ki-haqiqat-hai",
+  "https://www.fatwaqa.com/ur/fatawa/aqaid/pehle-ke-ulama-scientist-the-aaj-ke-kyun-nahi",
+  "https://www.fatwaqa.com/ur/fatawa/aqaid/ghair-e-nabi-ko-nabi-se-afzal-kehna-kaisa",
+  "https://www.fatwaqa.com/ur/fatawa/aqaid/hazrat-aisha-siddiqah-ki-pakdamni-ka-inkar-karne-wale-ka-hukum",
+  "https://www.fatwaqa.com/ur/fatawa/aqaid/big-bang-theory-kya-hai-iski-shari-hesiyat",
+  "https://www.fatwaqa.com/ur/fatawa/aqaid/mein-kafir-ho-jaunga-kehne-ka-hukum"]
  
-# for url in Ten_URLS:
-#     html = extract_fatwa_HTML(url)
+for url in Ten_URLS:
+    html = extract_fatwa_HTML(url)
 
-#     text = extract_fatwa_data(html)
+    text = extract_fatwa_data(html)
 
-#     first_split = re.split(question_title,text)
-
-#     question = re.split(start_pattern,first_split[1])[0]
-#     question = question.replace(answer_title,'')
-#     question = re.sub(tasmiya_pattern,'',question)
-
-#     print(question)
-#     print()
+    print(extract_ques_ans(text))
