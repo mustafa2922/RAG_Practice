@@ -24,7 +24,6 @@ def get_resume_index(data_manager, urls):
     print(f"📖 Resuming from index {processed}/{len(urls)}")
     return processed
 
-
 def main():
     """Main entry point for scraper runner."""
     data_manager = FatwaDataManager()
@@ -46,7 +45,6 @@ def main():
 
     elapsed = time.time() - start_time
     print(f"\n✅ Completed in {elapsed/60:.2f} minutes. Total scraped: {len(results)}")
-
 
 if __name__ == "__main__":
     main()
